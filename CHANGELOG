@@ -1,0 +1,16 @@
+v0.0.4:
+  date: 2014-12-04
+  changes:
+    - Added `dest` option
+v0.0.3:
+  date: 2014-11-28
+  changes:
+    - Fixed textual mistakes.
+v0.0.2:
+  date: 2014-11-28
+  changes:
+    - Added license, readme, authors and changelog files.
+v0.0.1:
+  date: 2014-11-28
+  changes:
+    - Initial version of the plugin

@@ -1,0 +1,37 @@
+{
+  "name": "grunt-twbs",
+  "description": "Grunt task to build custom CSS using Twitter Bootstrap",
+  "version": "0.0.4",
+  "homepage": "https://github.com/misterdai/grunt-twbs",
+  "author": {
+    "name": "David Boyer",
+    "url": "http://misterdai.yougeezer.co.uk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/misterdai/grunt-twbs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/misterdai/grunt-twbs/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/gruntjs/grunt-contrib-jshint/blob/master/LICENSE-MIT"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.0"
+  },
+  "keywords": [
+    "gruntplugin",
+    "bootstrap"
+  ],
+  "files": [
+    "tasks",
+    "LICENSE-MIT"
+  ]
+}
