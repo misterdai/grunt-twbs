@@ -2,7 +2,7 @@
 
 Build Twitter Bootstrap from source with your own separate `.less` files.
 
-__Synopsis__: The [twbs](https://github.com/misterdai/grunt-twbs) task will take a copy of the Twitter Bootstrap source files (available via [Bower](http://bower.io/) or [downloading directly](http://getbootstrap.com/getting-started/#download-source)) and combine it with your customised version of the `bootstrap.less` file.
+__Synopsis__: The [twbs](https://github.com/misterdai/grunt-twbs) task will take a copy of the Twitter Bootstrap source files (available via [Bower](http://bower.io/) or [downloading directly](http://getbootstrap.com/getting-started/#download-source)) and combine it with your customised version of any of bootstrap `*.less` files.
 
 ## Approach
 
@@ -43,7 +43,7 @@ Task targets and options may be specified according to the grunt [Configuring ta
 
 #### bootstrap
 
-Type: `String`  
+Type: `String`
 Default: `./bower_components/bootstrap`
 
 Location of your Twitter Bootstrap source files.
@@ -53,13 +53,20 @@ Location of your Twitter Bootstrap source files.
 
 Type: `String`
 
-Location of your customised `.less` file that will be used to build Twitter Bootstrap instead of the standard `bootstrap/less/bootstrap.less` file.
+Location of your customised `.less` files that will be used to build Twitter Bootstrap instead of the standard `bootstrap/less/*.less` files. Original bootstrap filenames must be used.
 
 #### dest
 
 Type: `String`
 
 Destination (path and filename) of the `.min.css` file that the Twitter Bootstrap build process will produce.
+
+#### cmd
+
+Type: `String`
+Default: `dist-css`
+
+Command to run on bootstrap's grunt [Grunt commands](http://getbootstrap.com/getting-started/#grunt-commands) guide.
 
 ### Usage examples
 
@@ -71,7 +78,24 @@ A single file to be built.  Files will be output to the `dist` directory within 
 grunt.initConfig({
   twbs: {
     target: {
-      less: './src/custom.less'
+      options: {
+        less: './src/'
+      }
+    }
+  }
+});
+```
+A more complete example using bootstrap from npm and compiling every file in dist:
+
+```js
+grunt.initConfig({
+  twbs: {
+    target:{
+        options: {
+            bootstrap: './node_modules/bootstrap',
+            less: 'less/',
+            cmd: 'dist'
+        }
     }
   }
 });
@@ -82,6 +106,7 @@ grunt.initConfig({
 * Add Bootstrap version detection, to possibly support older builds.
 
 ## Release History
+ * 2015-09-21   v0.0.5   Added support for multiple files and bootstrap build commands
  * 2014-12-04   v0.0.4   Added `dest` option.
  * 2014-11-28   v0.0.3   Fixed textual mistakes.
  * 2014-11-28   v0.0.2   Added Readme and various other standard files.
