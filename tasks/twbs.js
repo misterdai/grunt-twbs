@@ -11,60 +11,68 @@
 'use strict';
 
 var path = require('path');
-var fs = require('fs');
+var fs = require('fs-extra');
 
 module.exports = function(grunt) {
   grunt.registerMultiTask('twbs', 'Custom Twitter Bootstrap', function() {
     var options = this.options({
       less: './src/bootstrap.less',
-      bootstrap: './bower_components/bootstrap'
+      bootstrap: './bower_components/bootstrap',
+      cmd: 'dist-css'
     });
 
-    var beforeDir = process.cwd();
+    // Make a list of files to process (can take any less file)
+    var ownFiles = grunt.file.expand({cwd:options.less}, '*.less')
+    if (ownFiles.length === 0) {
+        grunt.log.warn('No files found at less (' +options.less + ')');
+    }
+
     // Check the Bootstrap directory exists
     if (!fs.existsSync(options.bootstrap)) {
       grunt.log.error('Unable to locate Bootstrap (' + options.bootstrap + ')');
       return false;
     }
 
-    // Move the original bootstrap.less
-    var originalBs = path.join(options.bootstrap, 'less', 'bootstrap.original.less');
-    var targetBs = path.join(options.bootstrap, 'less', 'bootstrap.less');
-    var srcBs = path.resolve(options.less);
+    // Move the original *.less
+    for (var i = 0, len = ownFiles.length; i < len; i++) {
+        var backupBs = path.join(options.bootstrap, 'less', ownFiles[i].replace('.less', '.original.less'));
+        var targetBs = path.join(options.bootstrap, 'less', ownFiles[i]);
 
-    // Move the original Twitter Bootstrap `bootstrap.less` file out of the way
-    if (!fs.existsSync(originalBs)) {
-      fs.renameSync(
-        targetBs,
-        originalBs
-      );
+        // Move the original Twitter Bootstrap `*.less` files out of the way - Works 1st time only to avoid overwriting
+        if (!fs.existsSync(backupBs)) {
+          fs.renameSync(
+            targetBs,
+            backupBs
+          );
+        }
+
+        // Copy our own less files (will replace any old ones)
+        fs.copySync(path.join(options.less, ownFiles[i]), path.join(options.bootstrap, 'less', ownFiles[i]));
     }
 
-    // Remove any previous version of the `bootstrap.less` file
-    if (fs.existsSync(targetBs)) {
-      fs.unlinkSync(targetBs);
-    }
 
     var done = this.async();
 
+    grunt.verbose.writeln('Found source files: ' + grunt.log.wordlist(ownFiles));
+
     // Fires off Twitter Bootstrap's Grunt task for building the CSS
     var twbsGrunt = function() {
-      grunt.log.writeln('Running Bootstrap CSS task');
+      grunt.log.writeln('Running Bootstrap CSS task (' + options.cmd + ')');
       grunt.util.spawn(
         {
           grunt: true,
-          args: ['dist-css'],
+          args: [options.cmd],
           opts: {
             cwd: path.resolve(options.bootstrap)
           }
         },
         function (err, result, code) {
           if (err || code) {
-            grunt.log.error('Error executing Bootstrap CSS task');
+            grunt.log.error('Error executing Bootstrap task (' + options.cmd + ')');
             console.log(result.stdout);
             return done(false);
           }
-          grunt.log.writeln('Bootstrap CSS built');
+          grunt.log.writeln('Bootstrap (' + options.cmd + ') built');
           if (options.dest) {
             grunt.file.copy(
               path.join(path.resolve(options.bootstrap), 'dist/css/bootstrap.min.css'),
@@ -78,6 +86,7 @@ module.exports = function(grunt) {
 
     // Bootstrap will need its modules installed in order to build
     var twbsNpm = function() {
+
       if (fs.existsSync(path.resolve(path.join(options.bootstrap, 'node_modules')))) {
         // Modules found, skip step
         return twbsGrunt();
@@ -102,9 +111,8 @@ module.exports = function(grunt) {
       );
     };
 
-    // Copy the source `.less` file to the Bootstrap directory
-    fs.createReadStream(srcBs)
-      .on('end', twbsNpm)
-      .pipe(fs.createWriteStream(targetBs));
+    // Execute the tasks in bootstrap's grunt
+    twbsNpm();
+
   });
 };
