@@ -1,7 +1,7 @@
 {
   "name": "grunt-twbs",
   "description": "Grunt task to build custom CSS using Twitter Bootstrap",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "homepage": "https://github.com/misterdai/grunt-twbs",
   "author": {
     "name": "David Boyer",
